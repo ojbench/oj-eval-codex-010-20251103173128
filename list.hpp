@@ -459,20 +459,22 @@ public:
     void sort() {
         if (count <= 1) return;
         
-        // Convert to array for sorting
-        T *arr = new T[count];
+        // Allocate raw memory for array of pointers
+        T **arr = new T*[count];
         size_t idx = 0;
+        
+        // Collect pointers to data
         for (node *cur = head->next; cur != tail; cur = cur->next) {
-            arr[idx++] = *(cur->data);
+            arr[idx++] = cur->data;
         }
         
-        // Sort using provided algorithm
-        sjtu::sort<T>(arr, arr + count, [](const T &a, const T &b) { return a < b; });
+        // Sort pointers using provided algorithm
+        sjtu::sort<T*>(arr, arr + count, [](T* const &a, T* const &b) { return *a < *b; });
         
-        // Copy back to list
+        // Rebuild list in sorted order by swapping data pointers
         idx = 0;
         for (node *cur = head->next; cur != tail; cur = cur->next) {
-            *(cur->data) = arr[idx++];
+            cur->data = arr[idx++];
         }
         
         delete[] arr;
